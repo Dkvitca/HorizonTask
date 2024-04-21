@@ -1,0 +1,52 @@
+
+### Review of PlotOccurrences and ProbCorrections Classes ###
+
+#### PlotOccurrences Class ####
+- **__init__**: O(n) due to calls to fetch_data and process_data.
+- **fetch_data**: O(1), primarily dependent on network I/O.
+- **process_data**: O(n), due to Savitzky-Golay filter application. documentation: "https://scipy-cookbook.readthedocs.io/items/SavitzkyGolay.html"
+- **peak finding**:  O(n) linear with respect to the number of data points. documentation: "https://github.com/scipy/scipy/blob/v1.13.0/scipy/signal/_peak_finding.py#L729-L1010"
+- **plot_data**: O(n), iterates through data to generate plots.
+
+#### Total Complexity for PlotOccurrences ####
+Overall complexity: O(n)
+
+
+#### ProbCorrections Class ####
+- **__init__**: O(n) due to calls to fetch_data and process_data.
+- **fetch_data**: O(1), primarily involves network I/O.
+- **process_data**: O(n), similar operations as in PlotOccurrences.
+- **calculate_days_since_previous_trend_end**: O(n), iterates through each date to calculate days.
+- **calculate_average_intervals**: O(n), calculates intervals based on correction dates, linear with respect to the number of corrections.
+- **calculate**: O(n), combines multiple linear operations.
+- **plot_data**: O(n), involves plotting operations that iterate over calculated data.
+
+#### Total Complexity for ProbCorrections ####
+Overall complexity: O(n), as most operations are linear with respect to data size.
+
+
+
+
+
+### Review of DataAnalyzer Class ###
+
+#### __init__ ####
+- **Complexity**: O(1), initializes instance variables.
+
+#### fetch_data ####
+- **Complexity**: Typically O(1), depends on network conditions and API response.
+
+#### process_data ####
+- **Complexity**: O(n) due to Savitzky-Golay filter application, peak and trough detection.
+
+#### calculate_percentage_changes ####
+- **Complexity**: O(m), where m is the number of peaks/troughs. Typically O(n) in the worst case.
+
+#### identify_downward_trends ####
+- **Complexity**: O(m), directly proportional to the number of calculated percentage changes. O(n) in the worst case.
+
+#### plot_data ####
+- **Complexity**: Dependent on the implementation in subclasses but generally O(n) if it involves plotting all data points.
+
+#### Overall Complexity for DataAnalyzer ####
+Overall complexity: O(n), dominated by linear data processing functions across the class methods.

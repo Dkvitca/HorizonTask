@@ -1,0 +1,47 @@
+    
+ 
+    ## set prominence = 10 for both if start_date=2014-01-01
+
+    ## works very good if the start_date is older for example: start_date='1994-01-01' 
+    def find_peaks_and_troughs(self, distance=10):
+        # Find peaks and troughs using Savitzky-Golay filter
+        self.sg_peaks, _ = signal.find_peaks(self.sg_filter, distance=distance, prominence=5)
+        self.sg_troughs, _ = signal.find_peaks(-self.sg_filter, distance=distance, prominence=5)
+    
+    ## after reviewing the plots for both 1994 and 2014 it seems that the issue is beacuse in one the peak comes
+       before the trough while in the oter its in reverse.
+
+
+    
+
+    ## KNOWN BUGS ## 
+    - calculation of the avg days until next trend is wrong
+    - the problem mentioned above with regards to the first element to be discovered of trough or peak.
+    
+
+
+    ## analysis of runtime
+    DataAnalyzer:
+    - fetch_data -> O(1) reffering to the act not latency and time of api request.
+    - "process_data" -> {
+        "sg_filter" -> savgol filter recives an array index_data['close'] of length n, and returns same size array
+        and computes the filter. the filter runs O(n) as can be seen in 
+        documentation: "https://scipy-cookbook.readthedocs.io/items/SavitzkyGolay.html",
+
+        "find_peak"s -> recives the returnd savgol filter array of size n, and returns another array of size
+        M. where M is the amount of peaks found. runs in O(n)
+        documentation: "https://github.com/scipy/scipy/blob/v1.13.0/scipy/signal/_peak_finding.py#L729-L1010"
+
+        "find_peaks#2" -> O(n), returns an array of troughs of length L
+
+        "calculate_percentage_changes" -> one for loop over the size (L > M : L else M) 
+        returns an array size of (A) where A is < N
+        runs in O(L) or O (M) where L and M are < than N
+        
+
+        "identify_downward_trends" -> O(L) runs a loop over the length of L returned from calculate_percentage_changes
+
+    }
+
+    PlotOccurences:
+    -"plot_data" -> assumed for now to be O(L*M) where n is leng 
